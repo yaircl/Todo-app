@@ -1,0 +1,503 @@
+﻿<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323  -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <link href="css/ui-lightness/jquery-ui-1.10.4.min.css" rel="stylesheet" />
+    <link href="css/jquery.mobile.theme-1.4.2.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/jquery.mobile-1.4.2.css" rel="stylesheet" type="text/css" />
+    <script src="js/jquery-1.11.1.min%20(1).js" type="text/javascript"></script>
+    <script src="js/jquery.mobile-1.4.2.js" type="text/javascript"></script>
+    <script src="js/jquery-ui-1.10.4.min.js"></script>
+    <script src="js/touchpunch.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+
+    <style type="text/css">
+        #page_1, #page_2 {
+            background-color: White;
+            overflow: hidden;
+        }
+
+        #contentpage {
+        }
+
+        * {
+            font-family: Segoe UI;
+            color: Black;
+        }
+
+        body {
+            overflow: scroll;
+            -ms-touch-action: none;
+            -ms-content-zooming: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .NoteHeader, .composedBy {
+            position: relative;
+            font-family: Segoe UI Light;
+            float: left;
+            color: #535353;
+            width: 70%;
+            height: auto;
+            overflow: hidden;
+            min-height: 20px;
+            margin-left: 2%;
+            vertical-align: middle;
+        }
+
+        .composedBy {
+            width: 20%;
+        }
+
+        .note {
+            font-size: 100%;
+            font-family: Segoe UI Light;
+            margin: 6px 0px 6px 0px;
+            height: 75px;
+            color: #535353;
+            background-color: #e4e4e4;
+            width: 100%;
+            border-left: 15px solid #4e9f54;
+            float: left;
+            /* position: relative;*/
+        }
+
+        #page {
+            width: 100%;
+        }
+
+        #AddButton {
+            position: fixed;
+            bottom: 20px;
+            background-color: rgba(0,0,0,0.3);
+            width: 100%;
+            height: 9%;
+        }
+
+        #DeleteToDo > button {
+            float: left;
+            width: 40%;
+            margin-right: 5%;
+            margin-left: 0px;
+        }
+
+        #DeleteToDo {
+            position: absolute;
+            left: 0px;
+            display: none;
+            width: 100%;
+            z-index: 50;
+            left:20px;
+           
+        }
+
+        .delnote {
+            float: right;
+            color: Gray;
+            margin: 20px;
+            font-size: 100%;
+            cursor: pointer;
+        }
+
+        .del {
+            position: relative;
+        }
+
+        #addBt {
+            font-family: Segoe UI Light;
+            font-size: 40px;
+            color: White;
+            position: relative;
+            height: 100%;
+            width: 100%;
+            top: -5px;
+        }
+
+
+
+        #alltodo {
+            overflow-y: hidden;
+            overflow-x: hidden;
+            width: 100%;
+            display: inline;
+        }
+
+        li {
+            list-style-type: none;
+            display: inline;
+            margin: 0px;
+            float: left;
+        }
+
+        .todoTOP, .todoBottom {
+            padding-left: 20px;
+        }
+
+        .todoBottom {
+            display: none;
+            position: relative;
+            background-color: #f3f3f3;
+        }
+
+        .todoTOP {
+            background-color: #e4e4e4;
+        }
+
+        #header {
+            font-family: 'Segoe UI';
+            font-weight: 100;
+            font-size: 130%;
+        }
+
+        #arrangeBy1 {
+            float: right;
+            width: 50%;
+            height: 10px;
+            margin-right: 5%;
+        }
+
+        label {
+            font-size: 70%;
+            font-family: 'Segoe WP SemiLight';
+        }
+
+        #header h1 {
+            font-size: 130%;
+            float: left;
+        }
+
+        .todoBottom div {
+            float: left;
+            height: 100%;
+            position: absolute;
+            top: 0px;
+        }
+
+        .dataHeader {
+            width: auto;
+        }
+
+        .dataText {
+            position: absolute;
+        }
+    </style>
+    <script>
+
+        var AllTODO = { All: new Array() };
+        var windowp = { width: 0, height: 0 };
+        var headerp = { width: 0, height: 0 };
+        var todop = { width: 0, height: 0 };
+        var todohedaerp = { width: 0, height: 0 };
+
+        var isAttached = 0;
+        document.addEventListener("deviceready", onDeviceReady, false);
+        app.initialize();
+
+        function onDeviceReady() {
+            loadnotes();
+        }
+
+        $(document).on('pageinit', function () {
+
+            if (isAttached == 0) {
+                $("#AllTODO").on('swiperight', ".note", (function () {
+
+                    var todo = $(this).addClass("del");
+                    $(todo).animate({ left: $(window).width() }, 500);
+                    $("#DeleteToDo").css({ top: $(".del").offset().top, display: "inline" });
+
+                }));
+
+                $("#AllTODO").on('click', ".note", function () {
+
+                    var clicked = $(this);
+                    if ($(clicked).children(".todoBottom").css("display") == "none") {
+                        $(clicked).children(".todoBottom").css({ display: "block" });
+                        $(clicked).css({ height: $(clicked).height() * 2 });
+                    }
+                    else {
+                        $(clicked).children(".todoBottom").css({ display: "none" });
+                        $(clicked).css({ height: $(clicked).height() / 2 });
+
+                    }
+                });
+                isAttached = 1;
+            }
+            //  setInterval(loadnotes, 5000);
+            //  setInterval(fitTopage, 1000);
+
+            $(document).ready(function () {
+                fitTopage();
+                loadnotes();
+                // serverCall();
+                //  $("#alltodo").sortable();
+                //  $("#alltodo").disableSelection();
+
+            });
+
+
+
+        });
+
+        function serverCall() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:61144/Service1.svc/jsondata?id=1"
+            }).done(function (html) {
+                var h = html;
+                alert(new XMLSerializer().serializeToString(h));
+            });
+
+        }
+
+        function fitTopage() {
+
+            windowp.width = $(window).width();
+            windowp.height = $(window).height();
+            headerp.width = windowp.width;
+            headerp.height = windowp.height * 0.08;
+            todop.width = windowp.width;
+            todop.height = windowp.height * 0.11;
+
+            $("#alltodo").css({ height: windowp.height * 0.8, width: windowp.width });
+            $(".AddButton").css({ width: windowp.width });
+            $(".note").css({ height: todop.height, width: todop.width, 'border-left-width': todop.width * 0.05 });
+
+            $(".NoteHeader").css({ width: todop.width * 0.7, top: (todop.height / 2) - ((todop.height * 0.5) / (2)), "font-size": todop.height * 0.4 + "px" });
+            $(".composedBy").css({ width: todop.width * 0.1, top: todop.height / 2 - $(".NoteHeader").last().height() / 2 });
+
+            $(".todoBottom").css({ height: todop.height, top: todop.height });
+            $(".dataHeader").css({ top: todop.height * 0.1, "font-size": todop.height * 0.2 + "px", position: "absolute" });
+            $(".SinceCreate").css({ width: todop.width * 0.4 });
+            $(".todoHowlong").css({ left: todop.width * 0.4, width: todop.width * 0.2 });
+            $(".dataText").css({ top: todop.height * 0.5, "font-size": todop.height * 0.25 + "px" });
+            $(".todofrom").css({ left: todop.width * 0.6, width: todop.width * 0.4 });
+            $("#addBt").css({ left: windowp.width / 2 - 20 });
+            $("#alltodo").css({ width: windowp.width, left: -$("#alltodo").offset().left });
+            $("#header").css({ height: headerp.height, width: headerp.width });
+
+
+
+        }
+
+        function Savenote() {
+
+           
+
+            var todo = $("#toddtext").val();
+            var json;
+            var tododt = {
+                tododata: todo.toString(),
+                id: 1,
+                importent: 1,
+                CreatedOn: new Date(),
+                HowLong: $("#howlong").val(),
+                CreatedBy:"You"
+            };
+
+            if (localStorage.getItem('id') == null) {
+
+                localStorage.setItem('id', "1");
+            }
+            else {
+
+                var newid = parseInt(localStorage.getItem('id')) + 1;
+                tododt.id = newid;
+                localStorage.setItem('id', newid);
+            }
+            AllTODO.All[AllTODO.All.length] = tododt;
+            SaveAllToDo();
+            $.mobile.changePage("#page_1");
+            $("#toddtext , #howlong").val("");
+            loadnotes();
+
+            fitTopage();
+        }
+
+        function SaveAllToDo() {
+            var str = JSON.stringify(AllTODO);
+
+            localStorage.setItem('data', str);
+
+        }
+
+        function deletetodo(del) {
+
+            if (del) {
+                $(".del").hide();
+                var id = $(".del").children(".objectid").val();
+
+                var data = AllTODO;
+                for (var i = 0; i < AllTODO.All.length; i++) {
+                    if (AllTODO.All[i].id == id) {
+                        AllTODO.All.splice(i, 1);
+                        break;
+                    }
+                }
+                $(".del").removeClass("del");
+
+            }
+            else {
+                $(".del").animate({ left: 0 }, 500, "", function () { $(".del").removeClass("del"); });
+            }
+
+            $("#DeleteToDo").css({ display: "none" });
+        }
+
+        function loadnotes() {
+            var data = localStorage.getItem('data');
+            if (localStorage.getItem('data') != null) {
+                var htmlto = "";
+                for (var i = 0; i < AllTODO.All.length; i++) {
+                    htmlto += "<li>" + objectToHtml(AllTODO.All[i]) + "</li>";
+                }
+
+                $("#alltodo").html(htmlto);
+
+            }
+
+        }
+
+        function MoveToAdd() {
+
+            deletetodo(false);
+
+            $.mobile.changePage("#page_2");
+        }
+
+        function objectToHtml(obj) {
+            var howlongtxt = "";
+        
+            if (obj.HowLong != "") {
+                howlongtxt += obj.HowLong + " min";
+            }
+            return " <li><div class=\"note\"><div class=\"todoTOP\"><input type=\"hidden\" value=\"" + obj.id + "\" class=\"objectid\" /><div class=\"composedBy\"></div><div class=\"NoteHeader\">" + obj.tododata + "</div></div><div class=\"todoBottom\"><div class=\"SinceCreate\"><span class=\"dataHeader\">Created On:</span><div class=\"dataText\">" + obj.CreatedOn.toDateString() + "</div></div><div class=\"todoHowlong\"><span class=\"dataHeader\">How long:</span><div class=\"dataText\">" + howlongtxt + "</div></div><div class=\"todofrom\"><span class=\"dataHeader\">Created by :</span><div class=\"dataText\">You</div></div></div></div></li>";
+
+            //  aaareturn "<div class=\"note\"><input type=\"hidden\" value=\"" + obj.id + "\" class=\"objectid\" ></input><span class=\"NoteHeader\">" + obj.tododata + " </span><br /><div class=\"NoteContent\"></div> </div>";
+        }
+
+
+    </script>
+    <title></title>
+</head>
+<body>
+
+
+    <div data-role="page" id="page_1">
+        <div data-role="header">
+            <h2>to do</h2>
+        </div>
+        <div data-role="content" id="contentpage">
+            <div id="header">
+                <h1>  TO Do  </h1>
+                <div id="arrangeBy1">
+
+                    <select id="arrangeBy">
+                        <option value="All">Show All</option>
+                        <option value="Date">By Date</option>
+                    </select>
+                </div>
+            </div>
+            <div id="DeleteToDo">
+                <button onclick="deletetodo(true)" class="ui-btn-inline">
+                    Delete
+                </button>
+                <button onclick="deletetodo(false)" class="ui-btn-inline">
+                    back
+                </button>
+            </div>
+
+            <div id="AllTODO">
+                <ul id="alltodo">
+                    <!--
+
+
+
+
+                    <li>
+                        <div class="note">
+
+                            <div class="todoTOP">
+                                <input type="hidden" value="1" class="objectid" />
+                                <div class="composedBy">
+                                    You
+                                </div>
+                                <div class="NoteHeader">
+                                    build an App
+                                </div>
+
+                            </div>
+                            <div class="todoBottom">
+                                <div class="SinceCreate">
+                                    <span class="dataHeader">Created On:</span>
+                                    <div class="dataText">22/06/2014 15</div>
+                                </div>
+                                <div class="todoHowlong">
+                                    <span class="dataHeader">Take:</span>
+                                    <div class="dataText">50 min</div>
+                                </div>
+                                <div class="todofrom">
+                                    <span class="dataHeader">Created by :</span>
+                                    <div class="dataText">You</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </li>
+
+                        -->
+
+                </ul>
+            </div>
+        </div>
+        <div id="AddButton">
+            <div id="addBt" onclick="MoveToAdd()">
+                +
+            </div>
+        </div>
+
+    </div>
+    <div data-role="page" id="page_2">
+
+
+        <div data-role="header">
+            Add TO DO
+        </div>
+        <div data-role="content">
+
+            <input type="text" id="toddtext" placeholder="What To Do" />
+            <input type="number" id="howlong" placeholder="how long" />
+            <button onclick="Savenote()" id="save">Save</button>
+        </div>
+
+        <div data-role="footer" />
+    </div>
+
+
+
+</body>
+</html>

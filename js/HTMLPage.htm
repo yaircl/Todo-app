@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323  -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <link href="css/jquery.mobile.theme-1.4.2.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/jquery.mobile-1.4.2.css" rel="stylesheet" type="text/css" />
+    <script src="js/jquery-1.11.1.min%20(1).js" type="text/javascript"></script>
+    <script src="js/jquery.mobile-1.4.2.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <style type="text/css">
+        *
+        {
+            font-family: Segoe UI;
+            color: Black;
+        }
+        
+        a
+        {
+            border: none;
+            text-decoration: none;
+        }
+        
+        .NoteHeader
+        {
+            font-size: 250%;
+        }
+        .note
+        {
+            font-size: 100%;
+            font-family: Segoe UI;
+            margin: 5px;
+            padding-left: 20px;
+            height: 30%;
+            min-height: 100px;
+            max-height: 200px;
+            color: Black;
+            border: 1px solid #e5e5e5;
+            background-color: White;
+        }
+        
+        #page
+        {
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        
+        #AddButton
+        {
+            margin-left: auto;
+            margin-right: auto;
+            font-family: segoe UI;
+            position: absolute;
+            bottom: 0px;
+            float: right;
+        }
+        #DeleteToDo > button
+        {
+            float: left;
+            width: 40%;
+            margin-left: 20px;
+        }
+        #DeleteToDo
+        {
+            position: absolute;
+            display: none;
+            width: 100%;
+        }
+        .animateSwiff
+        {
+          position:relative;
+           -webkit-animation: firstanimation 1s; /* Chrome, Safari, Opera */
+            animation: firstanimation 1s;
+        }
+       
+         .dragged
+         {
+          /*  animation-fill-mode:forwards;
+                    -webkit-animation-fill-mode:forwards; /* Safari and Chrome */
+            /*   position:relative;
+           -webkit-animation: firstanimation 1s; /* Chrome, Safari, Opera
+            animation: firstanimation 1s;*/
+         }
+         /*
+        @keyframes firstanimation
+        {
+            from {left:0px; }
+            to {left:1000px;}
+            
+        }
+        @-webkit-keyframes myfirst {
+              from {left:0px;}
+            to {left:1000px; }
+            }*/
+            
+            
+    </style>
+    <script>
+        app.initialize();
+
+
+        //function onDeviceReady() {
+        //    alert("a");
+        //    navigator.camera.getPicture(w, w, { quality: 50 });
+        //}
+        function w(imagedata) {
+
+        }
+
+        //  $(document).on("pagecreate", "#page_1", function () {
+
+
+
+
+        var mousepos = { x: 1, y: 1 };
+        var source = 0;
+        $(document).on('pageinit', function () {
+        /*
+            $(document).bind('vmousemove', function (e) {
+
+                mousepos.x = e.pageX;
+                mousepos.y = e.pageY;
+                if ($("#DeleteToDo").css("display") == "none") {
+                    $(".dragged").css({ position: "relative", left: mousepos.x - source });
+                    $("#bt").html($(".dragged").css("left"));
+                }
+            });
+
+
+
+            $(document).bind('vmouseup', function () {
+                $("#bt").html("removed");
+                if (Math.abs(source - mousepos.x) > 50 && $(".dragged").length > 0) {
+
+                    $("#DeleteToDo").css({ display: "inline", top: $(".dragged").offset().top });
+                    var dir = (mousepos.x - source) / (Math.abs(mousepos.x - source));
+                   // $(".dragged").animate({ left: dir * 2000 }, 500);
+                }
+                else {
+                  //  $(".dragged").animate({ left: 0 }, 500, "linear");
+                    $(".dragged").removeClass("dragged");
+                    $("#DeleteToDo").css({ display: "none" });
+                }
+            });
+
+
+
+
+
+            $("#takepic").click(function () {
+                alert("pix");
+                navigator.notification.alert("take a pic", w);
+            });
+
+            $(".note").on("swipe", function () {
+              //  $(this).addClass("animateSwiff");
+                
+                if ($(".dragged").length == 0) {
+                $("#bt").html("add");
+                $(this).addClass("dragged");
+                source = mousepos.x;
+                }
+            });
+
+
+
+        });
+
+        function a() {
+            alert("function clicked!!!");
+            $(".note").css("background-color", "green");
+            navigator.camera.getPicture(w, w, { quality: 50 });
+
+        }
+        function deletetodo(del) {
+            if (del) {
+
+                $(".dragged").hide()
+                $(".dragged").removeClass("dragged");
+
+            }
+            else {
+
+                $(".dragged").animate({ left: 0 }, 300, "linear");
+                $(".dragged").removeClass("dragged");
+            }
+
+            $("#DeleteToDo").css({ display: "none" });
+        }
+        */
+
+        function loadnotes() {
+
+
+        }
+
+    </script>
+    <title></title>
+</head>
+<body>
+    <div data-role="page" id="page_1">
+        <div data-role="header">
+            TO DO</div>
+        <div data-role="content" id="contentpage">
+            <div id="DeleteToDo">
+                <button onclick="deletetodo(true)" class="ui-btn-inline">
+                    Delete</button>
+                <button onclick="deletetodo(false)" class="ui-btn-inline">
+                    back</button>
+            </div>
+            <div class="note">
+                <span class="NoteHeader">header </span>
+                <br />
+                <div class="NoteContent">
+                    this is the sipp of the note
+                </div>
+            </div>
+            <div class="note">
+                <span class="NoteHeader">header </span>
+                <br />
+                <div class="NoteContent">
+                    this is the sipp of the note 123
+                </div>
+            </div>
+            <div class="note">
+                <span class="NoteHeader">header </span>
+                <br />
+                <div class="NoteContent">
+                    this is the sipp of the note
+                </div>
+            </div>
+            <div class="note">
+                <span class="NoteHeader">header </span>
+                <br />
+                <div class="NoteContent">
+                    this is the sipp of the note
+                </div>
+            </div>
+            <div class="note">
+                <span class="NoteHeader">header </span>
+                <br />
+                <div class="NoteContent">
+                    this is the sipp of the note
+                </div>
+            </div>
+            <button id="bt" onclick="a();">
+                CLICK</button>
+            <div id="AddButton">
+                <a href="#page_2">
+                    <button id="addBt">
+                        +
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div data-role="page" id="page_2">
+        <div data-role="hedaer">
+            header</div>
+        <div data-role="content">
+            <input type="text" value="To Do" />
+            <br />
+            <input type="time" />
+            <input type="date" />
+            <input type="button" value="Save" id="save" />
+            <input type="button" value="pic" id="takepic" />
+        </div>
+        <div data-role="footer" />
+    </div>
+</body>
+</html>
